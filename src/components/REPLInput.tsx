@@ -6,8 +6,8 @@ import { unstable_renderSubtreeIntoContainer } from "react-dom";
 
 interface REPLInputProps {
   // TODO: Fill this with desired props... Maybe something to keep track of the submitted commands
-  history: string[];
-  setHistory: Dispatch<SetStateAction<string[]>>;
+  history: JSX.Element[];
+  setHistory: Dispatch<SetStateAction<JSX.Element[]>>;
 }
 // You can use a custom interface or explicit fields or both! An alternative to the current function header might be:
 // REPLInput(history: string[], setHistory: Dispatch<SetStateAction<string[]>>)
@@ -47,24 +47,104 @@ export function REPLInput(props: REPLInputProps) {
           // setFilepath(commandString.substring(8, commandString.length)); // maybe mock this to being a fixed
           props.setHistory([
             ...props.history,
-            commandString.substring(8, commandString.length),
+            <div>successfully loaded csv</div>,
           ]);
         } else {
           props.setHistory([
             ...props.history,
-            "Command: " + commandString,
-            "Output: " + commandString.substring(8, commandString.length),
+            <div>Command: {commandString}</div>,
+            <div>Output: successfully loaded csv</div>,
+          ]);
+        }
+      } else {
+        if (mode === 0) {
+          // setFilepath(commandString.substring(8, commandString.length)); // maybe mock this to being a fixed
+          props.setHistory([...props.history, <div>failed to load csv</div>]);
+        } else {
+          props.setHistory([
+            ...props.history,
+            <div>Command: {commandString}</div>,
+            <div>Output: failed to load csv</div>,
           ]);
         }
       }
     } else if (commandString === "viewcsv" && data !== undefined) {
-      props.setHistory([...props.history, "viewing"]); //
+      if (mode === 0) {
+        props.setHistory([
+          ...props.history,
+          <table style={{ width: 500 }}>
+            <tbody>
+              {data.map((rowContent, rowID) => (
+                <tr>
+                  {rowContent.map((val, rowID) => (
+                    <td key={rowID}>{val}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>,
+        ]);
+      } else {
+        props.setHistory([
+          ...props.history,
+          <div>Command: {commandString}</div>,
+          <div>
+            Output:
+            <table style={{ width: 500 }}>
+              <tbody>
+                {data.map((rowContent, rowID) => (
+                  <tr>
+                    {rowContent.map((val, rowID) => (
+                      <td key={rowID}>{val}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>,
+        ]);
+      }
     } else if (
       commandString.length >= 10 &&
       commandString.substring(0, 10) === "searchcsv " &&
-      filepath.length != 0
+      data !== undefined
+      // filepath.length != 0
     ) {
-      props.setHistory([...props.history, "searching"]);
+      if (mode === 0) {
+        props.setHistory([
+          ...props.history,
+          <table style={{ width: 500 }}>
+            <tbody>
+              {data.map((rowContent, rowID) => (
+                <tr>
+                  {rowContent.map((val, rowID) => (
+                    <td key={rowID}>{val}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>,
+        ]);
+      } else {
+        props.setHistory([
+          ...props.history,
+          <div>Command: {commandString}</div>,
+          <div>
+            Output:
+            <table style={{ width: 500 }}>
+              <tbody>
+                {data.map((rowContent, rowID) => (
+                  <tr>
+                    {rowContent.map((val, rowID) => (
+                      <td key={rowID}>{val}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>,
+        ]);
+      }
     }
 
     setCount(count + 1);
