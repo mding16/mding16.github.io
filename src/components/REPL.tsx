@@ -24,6 +24,8 @@ export default function REPL() {
       <REPLHistory history={history} />
       <hr></hr>
       <REPLInput history={history} setHistory={setHistory} />
+      {/* <hr></hr> */}
+      {/* <REPLOutput history={history} /> */}
     </div>
   );
 }

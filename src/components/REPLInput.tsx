@@ -16,10 +16,41 @@ export function REPLInput(props: REPLInputProps) {
   // TODO WITH TA : add a count state
   const [count, setCount] = useState<number>(0);
 
+  const [mode, setMode] = useState<number>(0); // 0 is brief, 1 is verbose
+  const [filepath, setFilepath] = useState<string>("");
+
+  // const [output, setOutput] = useState(new Map());
+
   // TODO WITH TA: build a handleSubmit function called in button onClick
   function handleSubmit(commandString: string) {
+    if (commandString === "verbose") {
+      setMode(1);
+    } else if (commandString === "brief") {
+      setMode(0);
+    } else if (
+      commandString.length >= 8 &&
+      commandString.substring(0, 8) === "loadcsv "
+    ) {
+      setFilepath(commandString.substring(8, commandString.length)); // maybe mock this to being a fixed
+      // const newMap = new Map(output);
+      // newMap.set("loadcsv", filepath);
+      // setOutput(newMap);
+
+      props.setHistory([
+        ...props.history,
+        commandString.substring(8, commandString.length),
+      ]);
+    } else if (commandString === "viewcsv" && filepath.length != 0) {
+      props.setHistory([...props.history, "viewing"]); //
+    } else if (
+      commandString.length >= 10 &&
+      commandString.substring(0, 10) === "searchcsv " &&
+      filepath.length != 0
+    ) {
+      props.setHistory([...props.history, "searching"]);
+    }
+
     setCount(count + 1);
-    props.setHistory([...props.history, commandString]);
     setCommandString("");
   }
   // TODO: Once it increments, try to make it push commands... Note that you can use the `...` spread syntax to copy what was there before
