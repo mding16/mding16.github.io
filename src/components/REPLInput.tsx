@@ -1,6 +1,8 @@
 import "../styles/main.css";
 import { Dispatch, SetStateAction, useState } from "react";
 import { ControlledInput } from "./ControlledInput";
+import { filepathToParsedCSVMap } from "./mockedJson";
+import { unstable_renderSubtreeIntoContainer } from "react-dom";
 
 interface REPLInputProps {
   // TODO: Fill this with desired props... Maybe something to keep track of the submitted commands
@@ -19,7 +21,7 @@ export function REPLInput(props: REPLInputProps) {
   const [mode, setMode] = useState<number>(0); // 0 is brief, 1 is verbose
   const [filepath, setFilepath] = useState<string>("");
 
-  // const [output, setOutput] = useState(new Map());
+  const [data, setData] = useState<string[][] | undefined>([]); // call setData in loadcsv, call data in view/search?
 
   // TODO WITH TA: build a handleSubmit function called in button onClick
   function handleSubmit(commandString: string) {
@@ -31,16 +33,31 @@ export function REPLInput(props: REPLInputProps) {
       commandString.length >= 8 &&
       commandString.substring(0, 8) === "loadcsv "
     ) {
-      setFilepath(commandString.substring(8, commandString.length)); // maybe mock this to being a fixed
-      // const newMap = new Map(output);
-      // newMap.set("loadcsv", filepath);
-      // setOutput(newMap);
-
-      props.setHistory([
-        ...props.history,
-        commandString.substring(8, commandString.length),
-      ]);
-    } else if (commandString === "viewcsv" && filepath.length != 0) {
+      if (
+        filepathToParsedCSVMap.has(
+          commandString.substring(8, commandString.length)
+        )
+      ) {
+        setData(
+          filepathToParsedCSVMap.get(
+            commandString.substring(8, commandString.length)
+          )
+        );
+        if (mode === 0) {
+          // setFilepath(commandString.substring(8, commandString.length)); // maybe mock this to being a fixed
+          props.setHistory([
+            ...props.history,
+            commandString.substring(8, commandString.length),
+          ]);
+        } else {
+          props.setHistory([
+            ...props.history,
+            "Command: " + commandString,
+            "Output: " + commandString.substring(8, commandString.length),
+          ]);
+        }
+      }
+    } else if (commandString === "viewcsv" && data !== undefined) {
       props.setHistory([...props.history, "viewing"]); //
     } else if (
       commandString.length >= 10 &&
