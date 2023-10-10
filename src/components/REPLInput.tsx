@@ -21,7 +21,9 @@ export function REPLInput(props: REPLInputProps) {
   const [mode, setMode] = useState<number>(0); // 0 is brief, 1 is verbose
   const [filepath, setFilepath] = useState<string>("");
 
-  const [data, setData] = useState<string[][] | undefined>([]); // call setData in loadcsv, call data in view/search?
+  const[dataLoaded, setDataLoaded] = useState<number>(0); // 0 is data not loaded, 1 is data loaded
+
+  const [data, setData] = useState<string[][]>(); // call setData in loadcsv, call data in view/search?
 
   // TODO WITH TA: build a handleSubmit function called in button onClick
   function handleSubmit(commandString: string) {
@@ -39,10 +41,9 @@ export function REPLInput(props: REPLInputProps) {
         )
       ) {
         setData(
-          filepathToParsedCSVMap.get(
-            commandString.substring(8, commandString.length)
-          )
+          filepathToParsedCSVMap.get(commandString.substring(8, commandString.length))
         );
+        setDataLoaded(1)
         if (mode === 0) {
           // setFilepath(commandString.substring(8, commandString.length)); // maybe mock this to being a fixed
           props.setHistory([
@@ -68,7 +69,11 @@ export function REPLInput(props: REPLInputProps) {
           ]);
         }
       }
-    } else if (commandString === "viewcsv" && data !== undefined) {
+    } else if (commandString === "view" && dataLoaded === 0) {
+      props.setHistory([...props.history,
+        <div>data not loaded</div>]
+        )
+    } else if (commandString === "view" && dataLoaded === 1) {
       if (mode === 0) {
         props.setHistory([
           ...props.history,
