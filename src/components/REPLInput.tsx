@@ -73,7 +73,15 @@ export function REPLInput(props: REPLInputProps) {
         }
       }
     } else if (commandString === "view" && dataLoaded === 0) {
-      props.setHistory([...props.history, <div>data not loaded</div>]);
+      if (mode == 0) {
+        props.setHistory([...props.history, <div>data not loaded</div>]);
+      } else {
+        props.setHistory([
+          ...props.history,
+          <div>Command: {commandString}</div>,
+          <div>Output: data not loaded</div>,
+        ]);
+      }
     } else if (commandString === "view" && dataLoaded === 1) {
       if (mode === 0) {
         props.setHistory([
@@ -115,7 +123,15 @@ export function REPLInput(props: REPLInputProps) {
       commandString.substring(0, 7) === "search " &&
       dataLoaded === 0
     ) {
-      props.setHistory([...props.history, <div>data not loaded</div>]);
+      if (mode == 0) {
+        props.setHistory([...props.history, <div>data not loaded</div>]);
+      } else {
+        props.setHistory([
+          ...props.history,
+          <div>Command: {commandString}</div>,
+          <div>Output: data not loaded</div>,
+        ]);
+      }
     } else if (
       commandString.length >= 7 &&
       commandString.substring(0, 7) === "search " &&
@@ -142,6 +158,13 @@ export function REPLInput(props: REPLInputProps) {
                   ))}
               </tbody>
             </table>,
+          ]);
+        } else if (
+          !commandString.substring(7, commandString.length).includes(" ")
+        ) {
+          props.setHistory([
+            ...props.history,
+            <div>missing input parameter</div>,
           ]);
         } else {
           props.setHistory([
@@ -175,6 +198,14 @@ export function REPLInput(props: REPLInputProps) {
               </table>
             </div>,
           ]);
+        } else if (
+          !commandString.substring(7, commandString.length).includes(" ")
+        ) {
+          props.setHistory([
+            ...props.history,
+            <div>Command: {commandString}</div>,
+            <div>Output: missing input parameter</div>,
+          ]);
         } else {
           props.setHistory([
             ...props.history,
@@ -182,6 +213,19 @@ export function REPLInput(props: REPLInputProps) {
             <div>Output: no such value in given column</div>,
           ]);
         }
+      }
+    } else {
+      if (mode === 0) {
+        props.setHistory([
+          ...props.history,
+          <div>invalid command or forgetting arguments</div>,
+        ]);
+      } else {
+        props.setHistory([
+          ...props.history,
+          <div>Command: {commandString}</div>,
+          <div>Output: invalid command or forgetting arguments</div>,
+        ]);
       }
     }
 
