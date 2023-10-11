@@ -1,10 +1,10 @@
 import "../styles/main.css";
-import { ModeStatus } from "./StatusComponents/ModeStatus";
-import { LoadStatus } from "./StatusComponents/LoadStatus";
-import { DataTable } from "./DataTable";
+import { ModeStatus } from "../StatusComponents/ModeStatus";
+import { LoadStatus } from "../StatusComponents/LoadStatus";
+import { DataTable } from "../MiscComponents/DataTable";
 import { Dispatch, SetStateAction, useState } from "react";
-import { ControlledInput } from "./ControlledInput";
-import { filepathToParsedCSVMap, queryToSearchedCSVMap } from "./mockedJson";
+import { ControlledInput } from "../MiscComponents/ControlledInput";
+import { filepathToParsedCSVMap, queryToSearchedCSVMap } from "../Mock/mockedJson";
 import { unstable_renderSubtreeIntoContainer } from "react-dom";
 import { getParsedCommandLineOfConfigFile, isJSDocCommentContainingNode } from "typescript";
 
