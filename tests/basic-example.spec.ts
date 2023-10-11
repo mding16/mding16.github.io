@@ -15,4 +15,4 @@ test('is 1 + 1 = 2?', () => {
 // Notice how you can test vanilla TS functions using Playwright as well!
 test('main.zero() should return 0', () => {
   expect(main.zero()).toBe(0)
-})
+}) 
