@@ -1,11 +1,13 @@
 import "../styles/main.css";
+import { ModeStatus } from "./StatusComponents/ModeStatus";
+import { LoadStatus } from "./StatusComponents/LoadStatus";
 import { Dispatch, SetStateAction, useState } from "react";
 import { ControlledInput } from "./ControlledInput";
 import { filepathToParsedCSVMap, queryToSearchedCSVMap } from "./mockedJson";
 import { unstable_renderSubtreeIntoContainer } from "react-dom";
 
+
 interface REPLInputProps {
-  // TODO: Fill this with desired props... Maybe something to keep track of the submitted commands
   history: JSX.Element[];
   setHistory: Dispatch<SetStateAction<JSX.Element[]>>;
 }
@@ -51,35 +53,36 @@ export function REPLInput(props: REPLInputProps) {
           // setFilepath(commandString.substring(8, commandString.length)); // maybe mock this to being a fixed
           props.setHistory([
             ...props.history,
-            <div>successfully loaded csv</div>,
+            <div className={"success"}>Successfully loaded CSV</div>,
           ]);
         } else {
           props.setHistory([
             ...props.history,
-            <div>Command: {commandString}</div>,
-            <div>Output: successfully loaded csv</div>,
+            <div className={"command"}>Command: {commandString}</div>,
+            <div className={"success"}>Output: successfully loaded csv</div>,
           ]);
         }
       } else {
         if (mode === 0) {
-          // setFilepath(commandString.substring(8, commandString.length)); // maybe mock this to being a fixed
-          props.setHistory([...props.history, <div>failed to load csv</div>]);
+          props.setHistory([
+            ...props.history, 
+          <div className={"command"}>failed to load csv</div>]);
         } else {
           props.setHistory([
             ...props.history,
-            <div>Command: {commandString}</div>,
-            <div>Output: failed to load csv</div>,
+            <div className={"command"}>Command: {commandString}</div>,
+            <div className={"error"}>Output: failed to load csv</div>,
           ]);
         }
       }
     } else if (commandString === "view" && dataLoaded === 0) {
       if (mode == 0) {
-        props.setHistory([...props.history, <div>data not loaded</div>]);
+        props.setHistory([...props.history, <div className={"error"}>data not loaded</div>]);
       } else {
         props.setHistory([
           ...props.history,
-          <div>Command: {commandString}</div>,
-          <div>Output: data not loaded</div>,
+          <div className={"command"}>Command: {commandString}</div>,
+          <div className={"error"}>Output: data not loaded</div>,
         ]);
       }
     } else if (commandString === "view" && dataLoaded === 1) {
@@ -128,8 +131,8 @@ export function REPLInput(props: REPLInputProps) {
       } else {
         props.setHistory([
           ...props.history,
-          <div>Command: {commandString}</div>,
-          <div>Output: data not loaded</div>,
+          <div className={"command"}>Command: {commandString}</div>,
+          <div className={"error"}>Output: data not loaded</div>,
         ]);
       }
     } else if (
@@ -164,12 +167,12 @@ export function REPLInput(props: REPLInputProps) {
         ) {
           props.setHistory([
             ...props.history,
-            <div>missing input parameter</div>,
+            <div className={"error"}>missing input parameter</div>,
           ]);
         } else {
           props.setHistory([
             ...props.history,
-            <div>no such value in given column</div>,
+            <div className={"error"}>no such value in given column</div>,
           ]);
         }
       } else {
@@ -204,13 +207,13 @@ export function REPLInput(props: REPLInputProps) {
           props.setHistory([
             ...props.history,
             <div>Command: {commandString}</div>,
-            <div>Output: missing input parameter</div>,
+            <div className={"error"}>Output: missing input parameter</div>,
           ]);
         } else {
           props.setHistory([
             ...props.history,
             <div>Command: {commandString}</div>,
-            <div>Output: no such value in given column</div>,
+            <div className={"error"}>Output: no such value in given column</div>,
           ]);
         }
       }
@@ -218,32 +221,24 @@ export function REPLInput(props: REPLInputProps) {
       if (mode === 0) {
         props.setHistory([
           ...props.history,
-          <div>invalid command or forgetting arguments</div>,
+          <div className={"error"}>invalid command or forgetting arguments</div>,
         ]);
       } else {
         props.setHistory([
           ...props.history,
           <div>Command: {commandString}</div>,
-          <div>Output: invalid command or forgetting arguments</div>,
+          <div className={"error"}>Output: invalid command or forgetting arguments</div>,
         ]);
       }
     }
-
     setCount(count + 1);
     setCommandString("");
   }
-  // TODO: Once it increments, try to make it push commands... Note that you can use the `...` spread syntax to copy what was there before
-  // add to it with new commands.
-  /**
-   * We suggest breaking down this component into smaller components, think about the individual pieces
-   * of the REPL and how they connect to each other...
-   */
+  
   return (
     <div className="repl-input">
-      {/* This is a comment within the JSX. Notice that it's a TypeScript comment wrapped in
-            braces, so that React knows it should be interpreted as TypeScript */}
-      {/* I opted to use this HTML tag; you don't need to. It structures multiple input fields
-            into a single unit, which makes it easier for screenreaders to navigate. */}
+      <p><ModeStatus mode={mode}></ModeStatus></p>
+      <p><LoadStatus loadStatus={dataLoaded}></LoadStatus></p>
       <fieldset>
         <legend>Enter a command:</legend>
         <ControlledInput
@@ -252,8 +247,6 @@ export function REPLInput(props: REPLInputProps) {
           ariaLabel={"Command input"}
         />
       </fieldset>
-      {/* TODO WITH TA: Build a handleSubmit function that increments count and displays the text in the button */}
-      {/* TODO: Currently this button just counts up, can we make it push the contents of the input box to the history?*/}
       <button onClick={() => handleSubmit(commandString)}>
         Submitted {count} times
       </button>

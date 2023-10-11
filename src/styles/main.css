@@ -29,3 +29,39 @@ button {
   margin: auto;
   display: block;
 }
+
+.success{
+  background: lightgreen;
+  color: black;
+  font-weight: bold
+}
+
+.error{
+  background: salmon;
+  color: black;
+  font-weight: bold
+}
+
+.command{
+  background: #2E3559;
+  color: white;
+  font-weight: bold
+}
+
+.loaded {
+  background: lightgreen;
+  color: black;
+  font-weight: bold
+}
+
+.notloaded{
+  background: salmon;
+  color: black;
+  font-weight: bold
+}
+
+.modestatus{
+  background: black;
+  color: white;
+  font-weight: bold
+}
