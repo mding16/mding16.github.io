@@ -14,17 +14,17 @@ export const filepathToParsedCSVMap = new Map([
 ]);
 
 const exampleCSV3 = [
-  ["1", "2", "3", "4", "5"],
-  ["The", "song", "remains", "the", "same."],
+  ["7"],
+  ["Women"],
 ];
 
 const exampleCSV4 = [
-  ["The", "song", "remains", "the", "same."],
-  ["It", "really", "does", "stay", "constant."],
+  ["Column"],
+  ["Word"]
 ];
 
 // if not in this map, we return an error message in replinput
 export const queryToSearchedCSVMap = new Map([
   ["7 Women", exampleCSV3],
-  ["columnname query", exampleCSV4],
+  ["Column Word", exampleCSV4],
 ]);

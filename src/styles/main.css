@@ -135,3 +135,28 @@ button {
   height: 55vh;
   font-weight: bold;
 }
+
+.table{
+  margin-left: auto;
+  margin-right: auto;
+  display: table;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+td, tr {
+  border: 1px solid black;
+  padding: 3px;
+  border: solid 2px;
+  text-align: center;
+  font-weight: bold;
+  color: black;
+}
+
+td{
+  width: 10% ;
+}
+
+.tablecontainer{
+  background-color: lightgreen;
+}

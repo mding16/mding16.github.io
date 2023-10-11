@@ -1,9 +1,9 @@
 interface ModeStatusProps {
-    mode: Number;
+    mode: boolean;
   }
 
 export function ModeStatus (props: ModeStatusProps) {
-    if (props.mode === 0){
+    if (props.mode){
         return <div className="briefmode">BRIEF MODE 
         <br></br> 
         <div className = "smalltext">(type 'mode' to change to verbose)</div>

@@ -1,35 +1,34 @@
 import "../styles/main.css";
 import { ModeStatus } from "./StatusComponents/ModeStatus";
 import { LoadStatus } from "./StatusComponents/LoadStatus";
+import { DataTable } from "./DataTable";
 import { Dispatch, SetStateAction, useState } from "react";
 import { ControlledInput } from "./ControlledInput";
 import { filepathToParsedCSVMap, queryToSearchedCSVMap } from "./mockedJson";
 import { unstable_renderSubtreeIntoContainer } from "react-dom";
-import { getParsedCommandLineOfConfigFile } from "typescript";
+import { getParsedCommandLineOfConfigFile, isJSDocCommentContainingNode } from "typescript";
 
 
 interface REPLInputProps {
   history: JSX.Element[];
   setHistory: Dispatch<SetStateAction<JSX.Element[]>>;
 }
+
+const searchLength = 7;
+const loadLength = 10; // true for brief, false for verbose
+
 export function REPLInput(props: REPLInputProps) {
-  const searchLength = 7;
-  const loadLength = 10;
   const [commandString, setCommandString] = useState<string>("");
   const [count, setCount] = useState<number>(0);
-  const [mode, setMode] = useState<number>(0); // 0 is brief, 1 is verbose
   const [dataLoaded, setDataLoaded] = useState<number>(0); // 0 is data not loaded, 1 is data loaded
   const [data, setData] = useState<string[][] | undefined>(); // call setData in loadcsv, call data in view/search?
   const[csvFilePath, setFilePath] = useState<String>("");
+  const [briefmode, setMode] = useState<boolean>(true);
 
   function handleSubmit(commandString: string) {
     {/* HANDLING COMMAND: mode */}
     if (commandString === "mode") {
-      if (mode === 0) {
-        setMode(1);
-      } else {
-        setMode(0);
-      }
+      setMode(!briefmode);
       
        {/* HANDLING COMMAND: load_file */}
     } else if ( 
@@ -43,129 +42,51 @@ export function REPLInput(props: REPLInputProps) {
         setData(filepathToParsedCSVMap.get(filePath));
         setDataLoaded(1);
         setFilePath(filePath);
-        load_csv_success(props, mode, commandString);
+        load_csv_success(props, briefmode, commandString);
 
-      } else {load_csv_fail(props, mode, commandString)}
+      } else {load_csv_fail(props, briefmode, commandString)}
 
       {/* HANDLING COMMAND: view */}
     } else if (commandString === "view" && dataLoaded === 0) {
-      view_fail(props, mode, commandString);
+      view_fail(props, briefmode, commandString);
     } else if (commandString === "view" && dataLoaded === 1) {
-      view_success(props, mode, commandString, data);
+      view_success(props, commandString, briefmode, data);
 
       {/* HANDLING COMMAND: search */}
     } else if (
       commandString.length >= searchLength &&
       commandString.substring(0, searchLength) === "search " &&
       dataLoaded === 0
-    ) {
-      if (mode == 0) {
-        props.setHistory([...props.history, <div>data not loaded</div>]);
-      } else {
-        props.setHistory([
-          ...props.history,
-          <div className={"command"}>Command: {commandString}</div>,
-          <div className={"error"}>Output: data not loaded</div>,
-        ]);
-      }
-    } else if (
+    ) {search_not_loaded(props, briefmode, commandString);} 
+
+    else if (
       commandString.length >= searchLength &&
       commandString.substring(0, searchLength) === "search " &&
       dataLoaded === 1
     ) {
-      if (mode === 0) {
-        if (
-          queryToSearchedCSVMap.has(
-            commandString.substring(searchLength, commandString.length)
-          )
-        ) {
-          props.setHistory([
-            ...props.history,
-            <table style={{ width: 500 }}>
-              <tbody>
-                {queryToSearchedCSVMap
-                  .get(commandString.substring(7, commandString.length))! // ! to assert it's not undefined
-                  .map((rowContent, rowID) => (
-                    <tr>
-                      {rowContent.map((val, rowID) => (
-                        <td key={rowID}>{val}</td>
-                      ))}
-                    </tr>
-                  ))}
-              </tbody>
-            </table>,
-          ]);
-        } else if (
-          !commandString.substring(searchLength, commandString.length).includes(" ")
-        ) {
-          props.setHistory([
-            ...props.history,
-            <div className={"error"}>missing input parameter</div>,
-          ]);
-        } else {
-          props.setHistory([
-            ...props.history,
-            <div className={"error"}>no such value in given column</div>,
-          ]);
-        }
-      } else {
-        if (
-          queryToSearchedCSVMap.has(
-            commandString.substring(7, commandString.length)
-          )
-        ) {
-          props.setHistory([
-            ...props.history,
-            <div>Command: {commandString}</div>,
-            <div>
-              Output:
-              <table style={{ width: 500 }}>
-                <tbody>
-                  {queryToSearchedCSVMap
-                    .get(commandString.substring(7, commandString.length))! // ! to assert it's not undefined
-                    .map((rowContent, rowID) => (
-                      <tr>
-                        {rowContent.map((val, rowID) => (
-                          <td key={rowID}>{val}</td>
-                        ))}
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>,
-          ]);
-        } else if (
-          !commandString.substring(7, commandString.length).includes(" ")
-        ) {
-          props.setHistory([
-            ...props.history,
-            <div>Command: {commandString}</div>,
-            <div className={"error"}>Output: missing input parameter</div>,
-          ]);
-        } else {
-          props.setHistory([
-            ...props.history,
-            <div>Command: {commandString}</div>,
-            <div className={"error"}>Output: no such value in given column</div>,
-          ]);
-        }
-      }
+      search_loaded(props, briefmode, commandString);
     } else {
-      error_message(props, mode, commandString)
+      error_message(props, briefmode, commandString)
     }
+
+    {/* Updating Submit Button */}
     setCount(count + 1);
     setCommandString("");
   }
   
+  {/* RETURNING REPL INPUT OUTPUT */}
   return (
     <div className="repl-input">
       <div className="container">
-        <ModeStatus mode={mode}></ModeStatus>
+        {/* MODE STATUS & DATA LOAD STATUS BARS */}
+        <ModeStatus mode={briefmode}></ModeStatus>
         <LoadStatus loadStatus={dataLoaded} csvFile={csvFilePath}></LoadStatus>
       </div>
       <div className = "container1">
         <div className = "history">COMMANDS</div>
       </div>
+
+      {/* COMMAND INPUT BAR */}
       <div className="container2">
         <ControlledInput
           value={commandString}
@@ -173,6 +94,8 @@ export function REPLInput(props: REPLInputProps) {
           ariaLabel={"Command input"}
         />
         <br></br>
+
+        {/* SUBMIT BUTTON */}
         <button onClick={() => handleSubmit(commandString)}>
           <div className="buttontext">Submitted {count} time(s)</div>
         </button>
@@ -181,8 +104,8 @@ export function REPLInput(props: REPLInputProps) {
   );
 }
 
-function load_csv_success(props: REPLInputProps, mode: number, command: string){
-  if (mode === 0) {
+function load_csv_success(props: REPLInputProps, briefmode: boolean, command: string){
+  if (briefmode) {
     props.setHistory([
       ...props.history,
       <div className={"success"}>Successfully loaded CSV</div>,
@@ -196,8 +119,8 @@ function load_csv_success(props: REPLInputProps, mode: number, command: string){
   }
 }
 
-function load_csv_fail(props: REPLInputProps, mode: number, command: string){
-  if (mode === 0) {
+function load_csv_fail(props: REPLInputProps, briefmode: boolean, command: string){
+  if (briefmode) {
     props.setHistory([
       ...props.history, 
     <div className={"error"}>failed to load csv</div>]);
@@ -210,8 +133,8 @@ function load_csv_fail(props: REPLInputProps, mode: number, command: string){
   }
 }
 
-function view_fail(props: REPLInputProps, mode: number, command: string){
-  if (mode == 0) {
+function view_fail(props: REPLInputProps, briefmode: boolean, command: string){
+  if (briefmode) {
     props.setHistory([...props.history, <div className={"error"}>data not loaded</div>]);
   } else {
     props.setHistory([
@@ -222,46 +145,23 @@ function view_fail(props: REPLInputProps, mode: number, command: string){
   }
 }
 
-function view_success(props: REPLInputProps, mode: number, command: string, data: string[][] | undefined){
-  if (mode === 0) {
+function view_success(props: REPLInputProps, command: string, briefmode: boolean, data: string[][] | undefined){
+  if (briefmode) {
     props.setHistory([
       ...props.history,
-      <table style={{ width: 500 }}>
-        <tbody>
-          {data!.map((rowContent, rowID) => (
-            <tr>
-              {rowContent.map((val, rowID) => (
-                <td key={rowID}>{val}</td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>,
+      <DataTable data={data}></DataTable>
     ]);
   } else {
     props.setHistory([
       ...props.history,
-      <div>Command: {command}</div>,
-      <div>
-        Output:
-        <table style={{ width: 500 }}>
-          <tbody>
-            {data!.map((rowContent, rowID) => (
-              <tr>
-                {rowContent.map((val, rowID) => (
-                  <td key={rowID}>{val}</td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>,
+      <div className = "command">Command: {command}</div>,
+      <DataTable data={data}></DataTable>
     ]);
   }
 }
 
-function error_message(props: REPLInputProps, mode: number, command: string){
-  if (mode === 0) {
+function error_message(props: REPLInputProps, briefmode: boolean, command: string){
+  if (briefmode) {
     props.setHistory([
       ...props.history,
       <div className={"error"}>Invalid command or arguments</div>,
@@ -272,5 +172,81 @@ function error_message(props: REPLInputProps, mode: number, command: string){
       <div className= {"command"}>Command: {command}</div>,
       <div className={"error"}>Output: Invalid command or arguments</div>,
     ]);
+  }
+}
+
+function search_not_loaded(props: REPLInputProps, briefmode: boolean, command: string){
+  if (briefmode) {
+    props.setHistory([...props.history, <div>data not loaded</div>]);
+  } else {
+    props.setHistory([
+      ...props.history,
+      <div className={"command"}>Command: {command}</div>,
+      <div className={"error"}>Output: data not loaded</div>,
+    ]);
+  }
+}
+
+function search_loaded(props: REPLInputProps, briefmode: boolean, command: string){
+  var searchString = command.substring(searchLength, command.length);
+  var validArguments = command.substring(searchLength, command.length).includes(" ");
+  var searchValid = queryToSearchedCSVMap.has(searchString);
+
+  if (validArguments){
+
+    if (searchValid){
+
+      if (briefmode){
+        var data = queryToSearchedCSVMap.get(searchString);
+        props.setHistory([
+          ...props.history,
+          <DataTable data={data}></DataTable>
+        ]);
+      }
+
+      if (!briefmode) {
+        var data = queryToSearchedCSVMap.get(searchString);
+        props.setHistory([
+          ...props.history,
+          <div className = "command">Command: {command}</div>,
+          <div className = "success">Output:</div>,
+          <DataTable data={data}></DataTable>
+        ]);
+      }
+    }
+
+    if (!searchValid){
+      if (briefmode){
+        props.setHistory([
+          ...props.history,
+          <div className = "error">Invalid search</div>
+        ]);
+      }
+
+      if (!briefmode){
+        props.setHistory([
+          ...props.history,
+          <div className = "command">Command: {command}</div>,
+          <div className = "error">Invalid search</div>
+        ]);
+      }
+    }
+  }
+
+  if (!validArguments){
+    if (briefmode){
+      props.setHistory([
+        ...props.history,
+        <div className = "error">Invalid number of arguments</div>
+      ]);
+    }
+
+    if (!briefmode) {
+      props.setHistory([
+        ...props.history,
+        <div className = "command">Command: {command}</div>,
+        <div className = "error">Invalid number of arguments</div>
+      ]);
+    }
   }
 }
