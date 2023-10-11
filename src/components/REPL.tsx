@@ -8,8 +8,13 @@ export default function REPL() {
 
   return (
     <div className="repl">
+      <div className = "container1">
+        <div className = "history">COMMAND HISTORY</div>
+        </div>
       <REPLHistory history={history} />
-      <hr></hr>
+      <div className = "container1">
+        <div className = "history">COMMAND STATUS</div>
+      </div>
       <REPLInput history={history} setHistory={setHistory} />
     </div>
   );

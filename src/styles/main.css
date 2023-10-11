@@ -1,15 +1,11 @@
-/*
-  This is a reasonable starting point for the CSS in Mock.
-  Positioning in CSS can sometimes be annoying to manage, so we've opted to 
-  give you this starter CSS. Feel free to modify it as you wish, though.
-*/
-
 .repl {
   position: relative;
   min-height: 95vh;
 }
 
 .repl-history {
+  flex: 2;
+  background-color: gray;
   height: 55vh;
   margin: auto;
   display: block;
@@ -20,14 +16,22 @@
   margin: auto;
   height: 10vh;
 }
+
 .repl-command-box {
   width: 90%;
   margin: auto;
   display: block;
 }
+
 button {
+  color: gray;
+  font-weight: bold;
   margin: auto;
   display: block;
+}
+
+.buttontext{
+  color: dark-gray;
 }
 
 .success{
@@ -48,20 +52,86 @@ button {
   font-weight: bold
 }
 
+.container {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: row;
+  width: 80%;
+  align-self: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.container1 {
+  flex-direction: row;
+  background-color: black;
+  width: 80%;
+  align-self: center;
+  margin-left: auto;
+  margin-right: auto
+}
+
+.container2 {
+  flex-direction: row;
+  background-color: black;
+  width: 80%;
+  height: 140%;
+  align-self: center;
+  margin-left: auto;
+  margin-right: auto
+}
+
 .loaded {
+  flex: 1;
+  height: 50px;
   background: lightgreen;
   color: black;
-  font-weight: bold
+  font-weight: bold;
 }
 
-.notloaded{
+.notloaded {
+  flex: 1;
+  height: 50px;
+  width: fit-content;
   background: salmon;
   color: black;
-  font-weight: bold
+  font-weight: bold;
 }
 
-.modestatus{
-  background: black;
+.briefmode {
+  flex: 1;
+  height: 50px;
+  background: gray;
   color: white;
-  font-weight: bold
+  font-weight: bold;
+}
+
+.verbosemode {
+  flex: 1;
+  height: 50px;
+  background: lavender;
+  color: black;
+  font-weight: bold;
+}
+
+.smalltext{
+  font-weight: bold;
+  font-size: small;
+}
+
+.history{
+  background-color: black;
+  height: 30px;
+  font-size:large;
+  font-weight: bold;
+  color: white;
+}
+
+.command-box{
+  background-color: rgb(75, 73, 73);
+  color: white;
+  flex:1;
+  font-size: small;
+  height: 55vh;
+  font-weight: bold;
 }
