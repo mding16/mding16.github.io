@@ -1,21 +1,9 @@
 import { test, expect } from "@playwright/test";
 
-/**
-  The general shapes of tests in Playwright Test are:
-    1. Navigate to a URL
-    2. Interact with the page
-    3. Assert something about the page against your expectations
-  Look for this pattern in the tests below!
- */
-
-// If you needed to do something before every test case...
 test.beforeEach(() => {
-  // ... you'd put it here.
-  // TODO: Is there something we need to do before every test case to avoid repeating code?
 });
 
 test("on page load, i see a command", async ({ page }) => {
-  // Notice: http, not https! Our front-end is not set up for HTTPs.
   await page.goto("http://localhost:8000/");
   await expect(page.getByText("Welcome to Mock!")).toBeVisible();
 });
