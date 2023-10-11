@@ -1,5 +1,5 @@
 import '../styles/App.css';
-import REPL from './REPL/REPL';
+import REPL from "./REPL";
 
 /**
  * This is the highest level component!
