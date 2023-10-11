@@ -15,7 +15,7 @@ interface REPLInputProps {
 }
 
 const searchLength = 7;
-const loadLength = 10; // true for brief, false for verbose
+const loadLength = 10;
 
 export function REPLInput(props: REPLInputProps) {
   const [commandString, setCommandString] = useState<string>("");
