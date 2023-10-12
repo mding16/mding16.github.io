@@ -14,21 +14,33 @@ import {
   isJSDocCommentContainingNode,
 } from "typescript";
 
+/**
+ * REPLInputProps
+ * @field history: list of JSX elements representing command hsitory
+ * @field setHistory: history setter
+ */
 interface REPLInputProps {
   history: JSX.Element[];
   setHistory: Dispatch<SetStateAction<JSX.Element[]>>;
 }
 
+/** number representing num of characters in "search " command */
 const searchLength = 7;
+/** number representing num of characters in "load_file " command */
 const loadLength = 10;
 
+/**
+ * REPLInput
+ * @param props represents REPLInputProps
+ * @returns REPL input UI (mode status & data load, command input bar, submit button)
+ */
 export function REPLInput(props: REPLInputProps) {
-  const [commandString, setCommandString] = useState<string>("");
-  const [count, setCount] = useState<number>(0);
+  const [commandString, setCommandString] = useState<string>(""); // represents command string
+  const [count, setCount] = useState<number>(0); // represents number of times button submitted
   const [dataLoaded, setDataLoaded] = useState<number>(0); // 0 is data not loaded, 1 is data loaded
   const [data, setData] = useState<string[][] | undefined>(); // call setData in loadcsv, call data in view/search
   const [csvFilePath, setFilePath] = useState<String>(""); // used for accessing our mock data map's "CSVs"
-  const [briefmode, setMode] = useState<boolean>(true);
+  const [briefmode, setMode] = useState<boolean>(true); // briefmode = true, verbosemode = false
 
   function handleSubmit(commandString: string) {
     {
@@ -120,6 +132,12 @@ export function REPLInput(props: REPLInputProps) {
   );
 }
 
+/**
+ * Function to update history based on mode for load_file command (SUCCESS)
+ * @param props represents props
+ * @param briefmode boolean representing if mode = briefmode 
+ * @param command string represents current command
+ */
 function load_csv_success(
   props: REPLInputProps,
   briefmode: boolean,
@@ -139,6 +157,12 @@ function load_csv_success(
   }
 }
 
+/**
+ * Function to update history based on mode for load_file command (FAIL)
+ * @param props represents props
+ * @param briefmode boolean representing if mode = briefmode 
+ * @param command string represents current command
+ */
 function load_csv_fail(
   props: REPLInputProps,
   briefmode: boolean,
@@ -158,6 +182,12 @@ function load_csv_fail(
   }
 }
 
+/**
+ * Function to update history based on mode for view command (FAIL)
+ * @param props represents props
+ * @param briefmode boolean representing if mode = briefmode 
+ * @param command string represents current command
+ */
 function view_fail(props: REPLInputProps, briefmode: boolean, command: string) {
   if (briefmode) {
     props.setHistory([
@@ -173,6 +203,12 @@ function view_fail(props: REPLInputProps, briefmode: boolean, command: string) {
   }
 }
 
+/**
+ * Function to update history based on mode for view command (SUCCESS)
+ * @param props represents props
+ * @param briefmode boolean representing if mode = briefmode 
+ * @param command string represents current command
+ */
 function view_success(
   props: REPLInputProps,
   command: string,
@@ -191,6 +227,12 @@ function view_success(
   }
 }
 
+/**
+ * Function to update history for error messages
+ * @param props represents props
+ * @param briefmode boolean representing if mode = briefmode 
+ * @param command string represents current command
+ */
 function error_message(
   props: REPLInputProps,
   briefmode: boolean,
@@ -210,6 +252,12 @@ function error_message(
   }
 }
 
+/**
+ * Function to update history for search command (if data is not loaded)
+ * @param props represents props
+ * @param briefmode boolean representing if mode = briefmode 
+ * @param command string represents current command
+ */
 function search_not_loaded(
   props: REPLInputProps,
   briefmode: boolean,
@@ -229,6 +277,12 @@ function search_not_loaded(
   }
 }
 
+/**
+ * Function to update history for search command (if data is loaded)
+ * @param props represents props
+ * @param briefmode boolean representing if mode = briefmode 
+ * @param command string represents current command
+ */
 function search_loaded(
   props: REPLInputProps,
   briefmode: boolean,

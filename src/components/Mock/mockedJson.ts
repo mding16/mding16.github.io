@@ -1,3 +1,6 @@
+/**
+ * Mocked JSON files 
+ */
 const exampleCSV1 = [
   ["blueberry", "pineapple", "banana"],
   ["1", "2", "3"],

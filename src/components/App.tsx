@@ -2,7 +2,7 @@ import '../styles/App.css';
 import REPL from "./REPL";
 
 /**
- * This is the highest level component!
+ * App function that runs MOCK
  */
 function App() {
   return (
