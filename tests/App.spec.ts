@@ -580,3 +580,21 @@ test("giving one of the listed commands but without the required arguments (i.e.
     "Command: searchOutput: invalid command or arguments"
   );
 });
+
+test("after loading valid CSV and submitting and then doing search but returning empty search result", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file ./data/mock/exampleCSV1.csv");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("search 0 NoExist");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "successfully loaded csv "
+  );
+});

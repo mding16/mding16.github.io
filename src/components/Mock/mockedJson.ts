@@ -337,6 +337,8 @@ const resultCSV3 = [
   ],
 ];
 
+const emptyCSV = [[""]]
+
 // if not in this map, we return an error message in replinput
 export const queryToSearchedCSVMap = new Map([
   // valid searches for example CSV 1
@@ -395,4 +397,5 @@ export const queryToSearchedCSVMap = new Map([
 
   // an example valid search for example CSV 3
   ["8 Women", resultCSV3],
+  ["0 NoExist", emptyCSV]
 ]);
