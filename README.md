@@ -34,9 +34,9 @@ REPL: <br>
 Command: npx playwright test
 
 ## VALID COMMANDS:
-load_file "filepath"
-view
-search "identifier" "tosearch"
+load_file "filepath"  <br>
+view  <br>
+search "identifier" "tosearch"  <br>
 mode
 
 ## RUN PROGRAM:
