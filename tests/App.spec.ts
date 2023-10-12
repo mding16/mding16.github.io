@@ -31,6 +31,8 @@ test("after I click the button, its label increments", async ({ page }) => {
   await expect(page.locator("css=button")).toHaveText("Submitted 4 time(s)");
 });
 
+// load tests
+
 test("after loading valid CSV and submitting, we receive the success message in brief mode", async ({
   page,
 }) => {
@@ -147,5 +149,312 @@ test("after switching to verbose and loading valid CSV and submitting, we receiv
 
   await expect(page.getByTestId("repl-history")).toHaveText(
     "Command: load_file ./data/mock/exampleCSV1.csvOutput: successfully loaded csvCommand: load_file ./data/mock/exampleCSV2.csvOutput: successfully loaded csv"
+  );
+});
+
+// view tests
+
+test("after loading valid CSV and submitting and then viewing, we see the result in brief mode", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file ./data/mock/exampleCSV1.csv");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("view");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "successfully loaded csvblueberrypineapplebanana123thissongremains"
+  );
+});
+
+test("switching to verbose, viewing in verbose; switching to brief, viewing in brief", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file ./data/mock/exampleCSV1.csv");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("mode");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("view");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("mode");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("view");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "successfully loaded csvCommand: viewOutput:blueberrypineapplebanana123thissongremainsblueberrypineapplebanana123thissongremains"
+  );
+});
+
+test("after switching to verbose and loading valid CSV and submitting and then viewing, we see the result in verbose mode", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page.getByLabel("Command input").fill("mode");
+  await page.locator("css=button").click();
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file ./data/mock/exampleCSV1.csv");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("view");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "Command: load_file ./data/mock/exampleCSV1.csvOutput: successfully loaded csvCommand: viewOutput:blueberrypineapplebanana123thissongremains"
+  );
+});
+
+test("after switching to verbose and loading valid CSV and viewing and then loading a different valid CSV and viewing, we get the correct tables for both views", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page.getByLabel("Command input").fill("mode");
+  await page.locator("css=button").click();
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file ./data/mock/exampleCSV1.csv");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("view");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "Command: load_file ./data/mock/exampleCSV1.csvOutput: successfully loaded csvCommand: viewOutput:blueberrypineapplebanana123thissongremains"
+  );
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file ./data/mock/exampleCSV2.csv");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("view");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "Command: load_file ./data/mock/exampleCSV1.csvOutput: successfully loaded csvCommand: viewOutput:blueberrypineapplebanana123thissongremainsCommand: load_file ./data/mock/exampleCSV2.csvOutput: successfully loaded csvCommand: viewOutput:TheSongsremainthesame.Itreallydoesstayconstant.Songsarereallythevibe."
+  );
+});
+
+test("viewing without first loading a valid CSV; viewing without loading a valid CSV", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page.getByLabel("Command input").fill("view");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText("data not loaded");
+
+  await page.getByLabel("Command input").fill("load_file sdgsangalkng");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("view");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "data not loadedfailed to load csvdata not loaded"
+  );
+});
+
+// search tests
+
+test("after loading valid CSV and submitting and then doing valid search by column index, we see the result in brief mode", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file ./data/mock/exampleCSV1.csv");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("search 2 remains");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "successfully loaded csvthissongremains"
+  );
+});
+
+test("after loading valid CSV and submitting and then doing valid search by column name, we see the result in brief mode", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file ./data/mock/exampleCSV1.csv");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("search blueberry 1");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "successfully loaded csv123"
+  );
+});
+
+test("after loading valid CSV and submitting and then doing invalid search without enough arguments, we see the error result in brief mode", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file ./data/mock/exampleCSV1.csv");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("search blueberry");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "successfully loaded csvinvalid number of arguments"
+  );
+});
+
+test("when searching without loaded data, we see the error result in brief mode", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page.getByLabel("Command input").fill("search blueberry 1");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText("data not loaded");
+});
+
+test("after loading valid CSV and submitting and then doing search but query doesn't exist in specified column, we see the error result in brief mode", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file ./data/mock/exampleCSV1.csv");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("search blueberry remains");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "successfully loaded csvquery not found in given column"
+  );
+});
+
+test("after switching to verbose, loading valid CSV, and submitting and then doing valid search by column index, we see the result in verbose mode", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page.getByLabel("Command input").fill("mode");
+  await page.locator("css=button").click();
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file ./data/mock/exampleCSV1.csv");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("search 2 remains");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "Command: load_file ./data/mock/exampleCSV1.csvOutput: successfully loaded csvCommand: search 2 remainsOutput:thissongremains"
+  );
+});
+
+test("after switching to verbose, loading valid CSV, and submitting and then doing valid search by column name, we see the result in verbose mode", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page.getByLabel("Command input").fill("mode");
+  await page.locator("css=button").click();
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file ./data/mock/exampleCSV1.csv");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("search blueberry 1");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "Command: load_file ./data/mock/exampleCSV1.csvOutput: successfully loaded csvCommand: search blueberry 1Output:123"
+  );
+});
+
+test("after switching to verbose, loading valid CSV, and submitting and then doing invalid search without enough arguments, we see the error result in verbose mode", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page.getByLabel("Command input").fill("mode");
+  await page.locator("css=button").click();
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file ./data/mock/exampleCSV1.csv");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("search blueberry");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "Command: load_file ./data/mock/exampleCSV1.csvOutput: successfully loaded csvCommand: search blueberryOutput: invalid number of arguments"
+  );
+});
+
+test("after switching to verbose, when searching without loaded data, we see the error result in verbose mode", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page.getByLabel("Command input").fill("mode");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("search blueberry 1");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "Command: search blueberry 1Output: data not loaded"
+  );
+});
+
+test("after switching to verbose, loading valid CSV, and submitting and then doing search but query doesn't exist in specified column, we see the error result in verbose mode", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page.getByLabel("Command input").fill("mode");
+  await page.locator("css=button").click();
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file ./data/mock/exampleCSV1.csv");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("search blueberry remains");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "Command: load_file ./data/mock/exampleCSV1.csvOutput: successfully loaded csvCommand: search blueberry remainsOutput: query not found in given column"
   );
 });
