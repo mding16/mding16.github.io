@@ -128,7 +128,7 @@ function load_csv_success(
   if (briefmode) {
     props.setHistory([
       ...props.history,
-      <div className={"success"}>successfully loaded CSV</div>,
+      <div className={"success"}>successfully loaded csv</div>,
     ]);
   } else {
     props.setHistory([

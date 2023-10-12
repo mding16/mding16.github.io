@@ -6,9 +6,9 @@ interface REPLHistoryProps {
 }
 export function REPLHistory(props: REPLHistoryProps) {
   return (
-    <div className = "container">
-      <div className = "command-box">
-       VALID COMMANDS:
+    <div className="container">
+      <div className="command-box">
+        VALID COMMANDS:
         <hr></hr>
         load_file "filepath"
         <hr></hr>
@@ -19,11 +19,13 @@ export function REPLHistory(props: REPLHistoryProps) {
         mode
         <hr></hr>
       </div>
-      <div className="repl-history">
-      {/* This is where command history will go */}
-      {/* TODO: To go through all the pushed commands... try the .map() function! */}
-        {props.history.map((value) => <div>{value}</div>)}
+      <div className="repl-history" data-testid="repl-history">
+        {/* This is where command history will go */}
+        {/* TODO: To go through all the pushed commands... try the .map() function! */}
+        {props.history.map((value) => (
+          <div>{value}</div>
+        ))}
       </div>
     </div>
-  );}
-
+  );
+}
