@@ -458,3 +458,125 @@ test("after switching to verbose, loading valid CSV, and submitting and then doi
     "Command: load_file ./data/mock/exampleCSV1.csvOutput: successfully loaded csvCommand: search blueberry remainsOutput: query not found in given column"
   );
 });
+
+// fully integrated test
+
+test("load, view, and search valid CSV in brief; then switch to verbose and load new CSV, search, and view (all valid searches)", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file ./data/mock/exampleCSV1.csv");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("view");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("search 2 remains");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("mode");
+  await page.locator("css=button").click();
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file ./data/mock/exampleCSV2.csv");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("search the the");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("view");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "successfully loaded csvblueberrypineapplebanana123thissongremainsthissongremainsCommand: load_file ./data/mock/exampleCSV2.csvOutput: successfully loaded csvCommand: search the theOutput:TheSongsremainthesame.Songsarereallythevibe.Command: viewOutput:TheSongsremainthesame.Itreallydoesstayconstant.Songsarereallythevibe."
+  );
+});
+
+// invalid command
+
+test("not giving one of the listed commands", async ({ page }) => {
+  await page.goto("http://localhost:8000/");
+
+  await page.getByLabel("Command input").fill("dslgnalkgnalkrgn");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "invalid command or arguments"
+  );
+});
+
+test("giving one of the listed commands but without the required arguments (i.e. no filepath for load)", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page.getByLabel("Command input").fill("load_file");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "invalid command or arguments"
+  );
+});
+
+test("giving one of the listed commands but without the required arguments (i.e. no column ID or query for search)", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page.getByLabel("Command input").fill("search");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "invalid command or arguments"
+  );
+});
+
+test("not giving one of the listed commands in verbose", async ({ page }) => {
+  await page.goto("http://localhost:8000/");
+
+  await page.getByLabel("Command input").fill("mode");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("dslgnalkgnalkrgn");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "Command: dslgnalkgnalkrgnOutput: invalid command or arguments"
+  );
+});
+
+test("giving one of the listed commands but without the required arguments (i.e. no filepath for load) in verbose", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page.getByLabel("Command input").fill("mode");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("load_file");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "Command: load_fileOutput: invalid command or arguments"
+  );
+});
+
+test("giving one of the listed commands but without the required arguments (i.e. no column ID or query for search) in verbose", async ({
+  page,
+}) => {
+  await page.goto("http://localhost:8000/");
+
+  await page.getByLabel("Command input").fill("mode");
+  await page.locator("css=button").click();
+
+  await page.getByLabel("Command input").fill("search");
+  await page.locator("css=button").click();
+
+  await expect(page.getByTestId("repl-history")).toHaveText(
+    "Command: searchOutput: invalid command or arguments"
+  );
+});
