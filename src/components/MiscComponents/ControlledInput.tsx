@@ -11,6 +11,11 @@ interface ControlledInputProps {
   }
   
 
+  /**
+   * returns controlled input from command input box
+   * @param param0 
+   * @returns jsx of the input 
+   */
   export function ControlledInput({value, setValue, ariaLabel}: ControlledInputProps) {
     return (
       <input type="text" className="repl-command-box"
