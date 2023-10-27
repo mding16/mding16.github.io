@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="trace3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/test-results/App-giving-one-of-the-listed-commands-but-without-the-required-arguments-i-e-no-filepath-for-load--chromium/trace.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

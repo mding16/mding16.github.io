@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="trace32">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/test-results/App-after-switching-to-verbose-and-loading-inv-a53d0-ng-we-receive-the-error-message-in-verbose-mode-chromium/trace.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

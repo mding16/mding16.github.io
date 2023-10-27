@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="trace">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/test-results/App-after-I-type-into-the-input-box-its-text-changes-chromium/trace.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -42,6 +42,7 @@ export function REPLInput(props: REPLInputProps) {
   const [csvFilePath, setFilePath] = useState<String>(""); // used for accessing our mock data map's "CSVs"
   const [briefmode, setMode] = useState<boolean>(true); // briefmode = true, verbosemode = false
 
+
   function handleSubmit(commandString: string) {
     {
       /* HANDLING COMMAND: mode */

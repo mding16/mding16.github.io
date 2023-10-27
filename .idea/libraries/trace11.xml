@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="trace11">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/test-results/App-on-page-load-i-see-a-command-chromium/trace.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
